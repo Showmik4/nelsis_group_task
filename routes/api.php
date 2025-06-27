@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,5 +19,9 @@ Route::middleware(['auth:api'])->group(function(){
     Route::post('me', [AuthController::class,'me']);
     Route::post('logout', [AuthController::class,'logout']);
 });
+
+Route::apiResource('products', ProductController::class);
+
+
 
 
