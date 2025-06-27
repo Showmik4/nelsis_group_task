@@ -10,29 +10,38 @@
         <thead>
             <tr>
             <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
+            <tr v-for ="(product , index) in products" :key="product.id">
+            <th scope="row"></th>
+            <td>{{product.name}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.description}}</td>
+            <td>
+          <img
+            :src="getImageUrl(product.image)"
+            @error="handleImageError"
+            alt="Product Image"
+            width="60"
+            height="60"
+            />
+            </td>
+            <td>
+            <button class="btn btn-danger btn-sm" @click="deleteProduct(product.id)">
+             Delete
+            </button>
+            <button class="btn btn-warning btn-sm" @click="editProduct(product.id)">
+             Edit
+            </button>
+            </td>
             </tr>
-            <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            </tr>
-            <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
+            <tr>          
             </tr>
         </tbody>
         </table>
@@ -42,9 +51,56 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
-    
+  data() {
+    return {
+      products: [],
+    };
+  },
+  mounted() {
+    this.fetchProducts();
+  },
+  methods: {
+  fetchProducts() {
+    axios.get('/api/products')
+      .then((response) => {
+        this.products = response.data;
+      })
+      .catch((error) => {
+        console.error('Error loading products:', error);
+      });
+  },
+
+  editProduct(id) {
+  console.log('Editing product with ID:', id);
+  this.$router.push({ name: 'Edit', params: { id } });
+  },
+
+  deleteProduct(id) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      axios.delete(`/api/products/${id}`)
+        .then(() => {
+          this.products = this.products.filter(product => product.id !== id);
+          alert('Product deleted successfully.');
+        })
+        .catch(error => {
+          console.error('Delete error:', error);
+          alert('Something went wrong while deleting the product.');
+        });
+    }
+  },
+
+  getImageUrl(photo) {    
+      return photo ? `/storage/${photo}` : '/images/default.jpg';
+  },
+
+  handleImageError(event) {
+    event.target.src = '/images/placeholder.png';
+  }
 }
+};
 </script>
 <style lang="">
     

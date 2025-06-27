@@ -1,6 +1,5 @@
 <template lang="">
-    <div>       
-        <router-link :to="{name:'AddNew'}">Add New</router-link>
+    <div>      
         <router-view />
     </div>
 </template>

@@ -18,7 +18,7 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'        => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'price'       => 'required|numeric',
             'image'       => 'nullable|image|max:2048', 
         ]);
@@ -51,7 +51,7 @@ class ProductController extends Controller
     }
 
     // Update a product
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
         $product = Product::find($id);
         if (!$product) return response()->json(['message' => 'Product not found'], 404);
@@ -66,15 +66,20 @@ class ProductController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
+       
+        $product->name = $request->name ?? $product->name;
+        $product->description = $request->description ?? $product->description;
+        $product->price = $request->price ?? $product->price;
+        
         if ($request->hasFile('image')) {
             $product->image = $request->file('image')->store('product_images', 'public');
         }
 
-        $product->update($request->only('name', 'description', 'price', 'image'));
+        $product->save(); 
 
         return response()->json($product);
     }
+
 
     // Delete a product
     public function destroy($id)
