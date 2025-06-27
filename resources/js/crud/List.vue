@@ -3,14 +3,13 @@
       <div class="row">
        <div class="col-md-12">
         <div class="card">
-        <div class="card-header">
-          <router-link :to="{name:'AddNew'}">Add New</router-link>
+        <div class="card-header">          
+          <button class="btn btn-success btn-sm me-2" @click="addProduct">Add Product</button>
           <button class="btn btn-danger btn-sm" @click="logout">Logout</button>
         </div>
         <table class="table">
         <thead>
-            <tr>
-            <th scope="col">#</th>
+            <tr>            
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Description</th>
@@ -19,8 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for ="(product , index) in products" :key="product.id">
-            <th scope="row"></th>
+            <tr v-for ="(product , index) in products" :key="product.id">           
             <td>{{product.name}}</td>
             <td>{{product.price}}</td>
             <td>{{product.description}}</td>
@@ -34,10 +32,10 @@
             />
             </td>
             <td>
-            <button class="btn btn-warning btn-sm" @click="editProduct(product.id)">
+            <button class="btn btn-warning btn-sm me-2" @click="editProduct(product.id)">
              Edit
             </button>
-            
+
             <button class="btn btn-danger btn-sm" @click="deleteProduct(product.id)">
              Delete
             </button>
@@ -82,24 +80,32 @@ export default {
       });
   },
 
+   addProduct() {
+    this.$router.push({ name: 'AddNew' });
+    },
+
   editProduct(id) {
   console.log('Editing product with ID:', id);
   this.$router.push({ name: 'Edit', params: { id } });
   },
 
   deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-      axios.delete(`/api/products/${id}`)
-        .then(() => {
-          this.products = this.products.filter(product => product.id !== id);
-          alert('Product deleted successfully.');
-        })
-        .catch(error => {
-          console.error('Delete error:', error);
-          alert('Something went wrong while deleting the product.');
-        });
-    }
-  },
+  if (confirm('Are you sure you want to delete this product?')) {
+    axios.delete(`/api/products/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    .then(() => {
+      this.products = this.products.filter(product => product.id !== id);
+      alert('Product deleted successfully.');
+    })
+    .catch(error => {
+      console.error('Delete error:', error.response?.data || error.message);
+      alert('Something went wrong while deleting the product.');
+    });
+  }
+ },
 
   logout() {
   axios.post('/api/logout', {}, {
