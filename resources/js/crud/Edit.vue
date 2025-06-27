@@ -88,7 +88,12 @@ export default {
   },
   methods: {
    fetchProduct() {
-  axios.get(`/api/products/${this.$route.params.id}`)
+    axios.get(`/api/products/${this.$route.params.id}`,{
+       headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+
+    })
     .then(response => {
       console.log('Product resource:', response.data);     
       const product = response.data.data || response.data;   

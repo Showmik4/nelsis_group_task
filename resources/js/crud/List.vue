@@ -5,6 +5,7 @@
         <div class="card">
         <div class="card-header">
           <router-link :to="{name:'AddNew'}">Add New</router-link>
+          <button class="btn btn-danger btn-sm" @click="logout">Logout</button>
         </div>
         <table class="table">
         <thead>
@@ -33,12 +34,14 @@
             />
             </td>
             <td>
-            <button class="btn btn-danger btn-sm" @click="deleteProduct(product.id)">
-             Delete
-            </button>
             <button class="btn btn-warning btn-sm" @click="editProduct(product.id)">
              Edit
             </button>
+            
+            <button class="btn btn-danger btn-sm" @click="deleteProduct(product.id)">
+             Delete
+            </button>
+            
             </td>
             </tr>
             <tr>          
@@ -64,7 +67,13 @@ export default {
   },
   methods: {
   fetchProducts() {
-    axios.get('/api/products')
+    axios.get('/api/products',{
+       headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+
+       })
+       
       .then((response) => {
         this.products = response.data;
       })
@@ -91,6 +100,22 @@ export default {
         });
     }
   },
+
+  logout() {
+  axios.post('/api/logout', {}, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  .then(() => {
+    localStorage.removeItem('token');
+    this.$router.push({ name: 'Login' });
+  })
+  .catch(error => {
+    console.error('Logout error:', error);
+    alert('Error logging out.');
+  });
+ },
 
   getImageUrl(photo) {    
       return photo ? `/storage/${photo}` : '/images/default.jpg';
