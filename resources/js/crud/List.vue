@@ -1,56 +1,55 @@
-<template lang="">
-    <div class="container">
-      <div class="row">
-       <div class="col-md-12">
-        <div class="card">
-        <div class="card-header">          
-          <button class="btn btn-success btn-sm me-2" @click="addProduct">Add Product</button>
-          <button class="btn btn-danger btn-sm" @click="logout">Logout</button>
-        </div>
-        <table class="table">
-        <thead>
-            <tr>            
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Description</th>
-            <th scope="col">Image</th>
-            <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for ="(product , index) in products" :key="product.id">           
-            <td>{{product.name}}</td>
-            <td>{{product.price}}</td>
-            <td>{{product.description}}</td>
-            <td>
-          <img
-            :src="getImageUrl(product.image)"
-            @error="handleImageError"
-            alt="Product Image"
-            width="60"
-            height="60"
-            />
-            </td>
-            <td>
-            <button class="btn btn-warning btn-sm me-2" @click="editProduct(product.id)">
-             Edit
-            </button>
+<template>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">        
+          <div class="card-header">          
+            <button class="btn btn-success btn-sm me-2" @click="addProduct">Add Product</button>
+            <button class="btn btn-danger btn-sm" @click="logout">Logout</button>
+          </div>
+          
+          <table class="table">
+            <thead>
+              <tr>            
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Description</th>
+                <th scope="col">Image</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
 
-            <button class="btn btn-danger btn-sm" @click="deleteProduct(product.id)">
-             Delete
-            </button>
-            
-            </td>
-            </tr>
-            <tr>          
-            </tr>
-        </tbody>
-        </table>
-         </div>
+            <tbody>
+              <tr v-for="(product, index) in products" :key="product.id">           
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.description }}</td>
+                <td>
+                  <img
+                    :src="getImageUrl(product.image)"
+                    @error="handleImageError"
+                    alt="Product Image"
+                    width="60"
+                    height="60"
+                  />
+                </td>
+                <td>
+                  <button class="btn btn-warning btn-sm me-2" @click="editProduct(product.id)">
+                    Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm" @click="deleteProduct(product.id)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        </div>
+      </div>
     </div>
+  </div>
 </template>
+
 <script>
 import axios from 'axios';
 
