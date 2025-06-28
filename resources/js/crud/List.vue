@@ -90,22 +90,19 @@ export default {
   },
 
   deleteProduct(id) {
-  if (confirm('Are you sure you want to delete this product?')) {
-    axios.delete(`/api/products/${id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-    .then(() => {
-      this.products = this.products.filter(product => product.id !== id);
-      alert('Product deleted successfully.');
-    })
-    .catch(error => {
-      console.error('Delete error:', error.response?.data || error.message);
-      alert('Something went wrong while deleting the product.');
-    });
-  }
- },
+    console.log('Token:', localStorage.getItem('token'));
+    if (confirm('Are you sure you want to delete this product?')) {
+      axios.delete(`/api/products/${id}`)
+        .then(() => {
+          this.products = this.products.filter(p => p.id !== id);
+          alert('Product deleted successfully.');
+        })
+        .catch(err => {
+          alert('Failed to delete product');
+          console.error(err);
+        });
+    }
+  },
 
   logout() {
   axios.post('/api/logout', {}, {

@@ -1,60 +1,76 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <button class="btn btn-primary" @click="goToList">List</button>
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Add New Product</h5>
+            <button class="btn btn-secondary btn-sm" @click="goToList">Back to List</button>
           </div>
           <div class="card-body">
+            <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ successMessage }}
+            <button type="button" class="btn-close" @click="successMessage = ''" aria-label="Close"></button>
+            </div>
+
+            <div v-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ errorMessage }}
+              <button type="button" class="btn-close" @click="errorMessage = ''" aria-label="Close"></button>
+            </div>
+
             <form @submit.prevent="handleSubmit">
-              <div class="form-group">
-                <label for="exampleInputEmail">Name</label>
-               <input 
+              <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
+                <input 
                   type="text"
                   class="form-control"
                   id="productName"
                   v-model="form.name"
-                  placeholder="Enter Name"
-                />    
-
-                <small v-if="errors.name" class="text-danger">{{ errors.name[0] }}</small>     
+                  placeholder="Enter product name"
+                />
+                <small v-if="errors.name" class="text-danger">{{ errors.name[0] }}</small>
               </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Price</label>
+
+              <div class="mb-3">
+                <label for="productPrice" class="form-label">Price</label>
                 <input
                   type="text"
                   class="form-control"
                   id="productPrice"
                   v-model="form.price"
-                  placeholder="Price"
+                  placeholder="Enter price"
                 />
-
-                <small v-if="errors.price" class="text-danger">{{ errors.price[0] }}</small>    
+                <small v-if="errors.price" class="text-danger">{{ errors.price[0] }}</small>
               </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Description</label>
+
+              <div class="mb-3">
+                <label for="productDescription" class="form-label">Description</label>
                 <textarea
-                  type="text"
                   class="form-control"
                   id="productDescription"
                   v-model="form.description"
-                  placeholder="Enter Description"
+                  rows="3"
+                  placeholder="Write a short description"
                 ></textarea>
-
-                <small v-if="errors.description" class="text-danger">{{ errors.description[0] }}</small>    
+                <small v-if="errors.description" class="text-danger">{{ errors.description[0] }}</small>
               </div>
-              <div class="form-group mb-2">
-                <label for="exampleInputPassword1">Image</label>
+
+              <div class="mb-4">
+                <label for="productImage" class="form-label">Product Image</label>
                 <input
                   type="file"
                   class="form-control"
-                  id="productImage"               
+                  id="productImage"
                   @change="handleImage"
                 />
-                <small v-if="errors.image" class="text-danger">{{ errors.image[0] }}</small>    
+                <small v-if="errors.image" class="text-danger">{{ errors.image[0] }}</small>
               </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-upload"></i> Submit Product
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -62,6 +78,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -76,6 +93,8 @@ export default {
         image: null,
       },
       errors: {},
+      successMessage: '',
+      errorMessage: ''
     };
   },
   methods: {
@@ -101,16 +120,27 @@ export default {
       })
       .then(response => {
         this.errors = {};
-        this.$router.push({ name: 'List' });
+        this.successMessage = 'Product added successfully!';
+        this.errorMessage = '';       
+        this.form = {
+          name: '',
+          price: '',
+          description: '',
+          image: null
+        };        
+        setTimeout(() => {
+          this.$router.push({ name: 'List' });
+        }, 2000);
       })
       .catch(error => {
+        this.successMessage = '';
         if (error.response && error.response.status === 422) {
-        this.errors = error.response.data.errors; 
+          this.errors = error.response.data.errors;
         } else {
-          console.error('Unexpected error:', error);
+          this.errorMessage = 'Something went wrong. Please try again later.';
         }
       });
-    },
+    }
   },
 };
 </script>

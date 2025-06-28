@@ -1,65 +1,84 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">            
-            <button class="btn btn-primary" @click="goToList">List</button>
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Edit Product</h5>
+            <button class="btn btn-secondary btn-sm" @click="goToList">
+              <i class="bi bi-arrow-left"></i> Back to List
+            </button>
           </div>
           <div class="card-body">
-            <form @submit.prevent="handleSubmit">
-              <div class="form-group">
-                <label for="productName">Name</label>
+           <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ successMessage }}
+            <button type="button" class="btn-close" @click="successMessage = ''" aria-label="Close"></button>
+          </div>
 
+          <div v-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ errorMessage }}
+            <button type="button" class="btn-close" @click="errorMessage = ''" aria-label="Close"></button>
+          </div>
+            <form @submit.prevent="handleSubmit">
+              <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
                 <input
                   type="text"
                   class="form-control"
                   id="productName"
                   v-model="form.name"
-                  placeholder="Enter Name"
+                  placeholder="Enter product name"
                 />
               </div>
 
-              <div class="form-group">
-                <label for="productPrice">Price</label>
+              <div class="mb-3">
+                <label for="productPrice" class="form-label">Price</label>
                 <input
                   type="text"
                   class="form-control"
                   id="productPrice"
                   v-model="form.price"
-                  placeholder="Price"
+                  placeholder="Enter price"
                 />
               </div>
 
-              <div class="form-group">
-                <label for="productDescription">Description</label>
+              <div class="mb-3">
+                <label for="productDescription" class="form-label">Description</label>
                 <textarea
                   class="form-control"
                   id="productDescription"
                   v-model="form.description"
-                  placeholder="Enter Description"
+                  rows="3"
+                  placeholder="Enter description"
                 ></textarea>
               </div>
 
-              <div class="form-group mb-2">
-                <label for="productImage">Image</label>
+              <div class="mb-4">
+                <label for="productImage" class="form-label">Product Image</label>
                 <input
                   type="file"
                   class="form-control"
                   id="productImage"
                   @change="handleImage"
                 />
-                <!-- Show current image preview -->
-                <img
-                  v-if="form.preview"
-                  :src="form.preview"
-                  alt="Current Image"
-                  class="mt-2"
-                  width="80"
-                />
+
+                <!-- Image preview -->
+                <div class="mt-2">
+                  <img
+                    v-if="form.preview"
+                    :src="form.preview"
+                    alt="Product Image"
+                    class="img-thumbnail"
+                    width="100"
+                  />
+                </div>
               </div>
 
-              <button type="submit" class="btn btn-primary">Update</button>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check2-circle"></i> Update Product
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -67,6 +86,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -79,8 +99,10 @@ export default {
         price: '',
         description: '',
         image: null,
-        preview: null, 
+        preview: null,         
       },
+       successMessage: '',
+       errorMessage: ''
     };
   },
   mounted() {
@@ -88,12 +110,8 @@ export default {
   },
   methods: {
    fetchProduct() {
-    axios.get(`/api/products/${this.$route.params.id}`,{
-       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-
-    })
+    axios.get(`/api/products/${this.$route.params.id}`
+    )
     .then(response => {
       console.log('Product resource:', response.data);     
       const product = response.data.data || response.data;   
@@ -137,12 +155,18 @@ export default {
       axios.post(`/api/products/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      .then(() => {
-        alert('Product updated successfully!');
-        this.$router.push({ name: 'List' });
+      .then(() => {        
+        this.successMessage = 'Product updated successfully!';
+        this.errorMessage = '';  
+
+        setTimeout(() => {
+          this.$router.push({ name: 'List' });
+        }, 2000);
       })
-      .catch(error => {
+     .catch(error => {
         console.error('Update failed:', error.response?.data?.errors || error);
+        this.errorMessage = 'Failed to update product. Please check the input.';
+        this.successMessage = '';
       });
     },
   },

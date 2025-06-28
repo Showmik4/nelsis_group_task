@@ -41,17 +41,15 @@ class ProductController extends Controller
 
         return response()->json($product, 201);
     }
-
-    // Show single product
+  
     public function show($id)
     {
         $product = Product::find($id);
         if (!$product) return response()->json(['message' => 'Product not found'], 404);
         return response()->json($product);
     }
-
-    // Update a product
-   public function update(Request $request, $id)
+   
+    public function update(Request $request, $id)
     {
         $product = Product::find($id);
         if (!$product) return response()->json(['message' => 'Product not found'], 404);
@@ -79,9 +77,7 @@ class ProductController extends Controller
 
         return response()->json($product);
     }
-
-
-    // Delete a product
+   
     public function destroy($id)
     {
         $product = Product::find($id);
