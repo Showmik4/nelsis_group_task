@@ -3,6 +3,7 @@ import AddNew from './../crud/AddNew.vue';
 import List from './../crud/List.vue';
 import Edit from './../crud/Edit.vue';
 import Login from './../auth/Login.vue';
+import Register from './../auth/Register.vue';
 
 
 const requireAuth = (to, from, next) => {
@@ -16,6 +17,7 @@ const requireAuth = (to, from, next) => {
 
 const routes = [
   { path: '/login', name: 'Login', component: Login },
+  { path: '/register', name: 'Register', component: Register },
   { path: '/', name: 'List', component: List, beforeEnter: requireAuth },
   { path: '/edit/:id', name: 'Edit', component: Edit, beforeEnter: requireAuth },
   { path: '/add-new', name: 'AddNew', component: AddNew, beforeEnter: requireAuth },

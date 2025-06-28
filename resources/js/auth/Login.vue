@@ -50,6 +50,10 @@
           </button>
         </div>
       </form>
+       <div class="text-center">
+        <span class="text-muted">Don't have an account?</span>
+        <router-link to="/register" class="ms-1 text-decoration-none">Register</router-link>
+      </div>
     </div>
   </div>
 </template>

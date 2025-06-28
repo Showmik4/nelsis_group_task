@@ -11,6 +11,17 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
-const app = createApp(App); 
-app.use(router);            
-app.mount('#content');     
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+const app = createApp(App);
+app.use(router);
+app.mount('#content');
